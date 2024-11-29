@@ -1,8 +1,10 @@
 networks:
   redpanda_network:
+    name: redpanda_network
     driver: bridge
 volumes:
-  redpanda-0: null
+  redpanda-0:
+    name: redpanda-0
 services:
   redpanda-0:
     command:
@@ -52,3 +54,13 @@ services:
       - 8080:8080
     depends_on:
       - redpanda-0
+  qdrant:
+    image: qdrant/qdrant
+    container_name: qdrant 
+    volumes:
+      - ./qdrant:/qdrant/storage
+    networks:
+      - redpanda_network
+    ports:
+      - 6333:6333 # HTTP
+      - 6334:6334 # GRPC

@@ -1,0 +1,54 @@
+# rpk connect run --log.level debug --env-file .env connect/embeddings.yaml
+input:
+  kafka_franz:
+    seed_brokers:
+      - "${REDPANDA_SERVERS}"
+    topics:
+      - "${REDPANDA_TOPIC}"
+    consumer_group: "mta-semantic"
+    auto_replay_nacks: false
+
+pipeline:
+  processors:
+    - mapping: |
+        root.trip_id = this.trip_id
+        root.stop_id = this.stop_id
+        root.arrival_time = this.arrival_time
+        root.text = "Route %s (%s) travelling %s arrived at %s at %s.".format(
+          this.route_id,
+          this.route_name,
+          this.stop_direction,
+          this.stop_name,
+          this.arrival,
+        )
+    - branch:
+        request_map: |
+          root = this.text
+        processors:
+          - cohere_embeddings:
+              model: embed-english-v3.0
+              api_key: "${COHERE_API_KEY}"
+              dimensions: search_document
+        result_map: |
+          root.embedding = this
+
+output:
+  broker:
+    pattern: fan_out
+    outputs:
+      - qdrant:
+          id: uuid_v4()
+          max_in_flight: 64
+          grpc_host: localhost:6334
+          collection_name: "${QDRANT_COLLECTION}"
+          vector_mapping: root = this.embedding
+          payload_mapping: |
+            root = {
+              "trip_id": this.trip_id,
+              "stop_id": this.stop_id,
+              "arrival_time": this.arrival_time
+            }
+      - stdout: {}
+    batching:
+      count: 10
+      period: 1s
