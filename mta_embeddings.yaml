@@ -11,15 +11,16 @@ input:
 pipeline:
   processors:
     - mapping: |
+        root.source = this.source
         root.trip_id = this.trip_id
         root.stop_id = this.stop_id
         root.arrival_time = this.arrival_time
-        root.text = "Route %s (%s) travelling %s arrived at %s at %s.".format(
+        root.text = "Route %s '%s' travelling %s will arrive at '%s' at %s.".format(
           this.route_id,
           this.route_name,
-          this.stop_direction,
+          this.stop_direction.lowercase(),
           this.stop_name,
-          this.arrival,
+          this.arrival_time,
         )
     - branch:
         request_map: |
@@ -46,7 +47,8 @@ output:
             root = {
               "trip_id": this.trip_id,
               "stop_id": this.stop_id,
-              "arrival_time": this.arrival_time
+              "arrival_time": this.arrival_time,
+              "text": this.text,
             }
       - stdout: {}
     batching:

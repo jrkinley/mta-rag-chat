@@ -124,6 +124,8 @@ class MTAReference:
             ]
         ]
         df = df[df["trip_id"] == trip]
+        if len(df) == 0:
+            return {}
         stops_at = []
         for _, row in df.iterrows():
             if from_stop:
@@ -145,6 +147,33 @@ class MTAReference:
             )
         )
         return res
+
+    def get_route_name(self, route_id: str) -> str:
+        """Returns route name for route id"""
+        name: str = None
+        try:
+            name = self.routes.loc[route_id].iloc[0]
+        except KeyError:
+            logging.debug(f"Unknown route: {route_id}")
+        return name
+
+    def get_stop_name(self, stop_id: str) -> str:
+        """Returns stop name for stop id"""
+        name: str = None
+        try:
+            name = self.stops.loc[stop_id].iloc[0]
+        except KeyError:
+            logging.debug(f"Unknown stop: {stop_id}")
+        return name
+
+    def get_direction(self, stop_id: str) -> str:
+        """Returns direction of travel (North or South) for stop id."""
+        direction: str = ""
+        if stop_id[-1].upper() == "N":
+            direction = "North"
+        elif stop_id[-1].upper() == "S":
+            direction = "South"
+        return direction
 
     @staticmethod
     def row2text(row: Series) -> str:

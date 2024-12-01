@@ -40,47 +40,12 @@ producer = Producer(
     {
         "bootstrap.servers": bootstrap_servers,
         "linger.ms": 10,
-        "request.timeout.ms": 1000,
     }
 )
 logging.info(f"Kafka bootstrap servers: {bootstrap_servers}")
 
-# Route reference data
+# MTA reference data
 ref = MTAReference()
-routes_df = ref.get_routes()
-
-# Stop reference data
-stops_df = ref.get_stops()
-
-
-def get_route_name(route_id: str) -> str:
-    """Returns route name for route id"""
-    name: str = None
-    try:
-        name = routes_df.loc[route_id].iloc[0]
-    except KeyError:
-        logging.debug(f"Unknown route: {route_id}")
-    return name
-
-
-def get_stop_name(stop_id: str) -> str:
-    """Returns stop name for stop id"""
-    name: str = None
-    try:
-        name = stops_df.loc[stop_id].iloc[0]
-    except KeyError:
-        logging.debug(f"Unknown stop: {stop_id}")
-    return name
-
-
-def get_direction(stop_id: str) -> str:
-    """Returns direction of travel (North or South) for stop id."""
-    direction: str = ""
-    if stop_id[-1].upper() == "N":
-        direction = "North"
-    elif stop_id[-1].upper() == "S":
-        direction = "South"
-    return direction
 
 
 def delivery_report(err, msg):
@@ -110,25 +75,26 @@ def fetch_updates(url: str, routes: Optional[list[str]] = None):
                     continue
                 if routes and trip_update.trip.route_id not in routes:
                     continue
-                route_name = get_route_name(trip_update.trip.route_id)
+                route_name = ref.get_route_name(trip_update.trip.route_id)
                 if route_name is None:
                     continue
-                stop_name = get_stop_name(stop.stop_id)
+                stop_name = ref.get_stop_name(stop.stop_id)
                 if stop_name is None:
                     continue
                 stop_event = {
+                    "source": "realtime",
                     "trip_id": trip_update.trip.trip_id,
                     "route_id": trip_update.trip.route_id,
                     "route_name": route_name,
                     "stop_id": stop.stop_id,
                     "stop_name": stop_name,
-                    "stop_direction": get_direction(stop.stop_id),
-                    "arrival": datetime.fromtimestamp(stop.arrival.time).strftime(
+                    "stop_direction": ref.get_direction(stop.stop_id),
+                    "arrival_time": datetime.fromtimestamp(stop.arrival.time).strftime(
                         "%Y-%m-%dT%H:%M:%S"
                     ),
-                    "departure": datetime.fromtimestamp(stop.departure.time).strftime(
-                        "%Y-%m-%dT%H:%M:%S"
-                    ),
+                    "departure_time": datetime.fromtimestamp(
+                        stop.departure.time
+                    ).strftime("%Y-%m-%dT%H:%M:%S"),
                 }
                 producer.produce(
                     topic,

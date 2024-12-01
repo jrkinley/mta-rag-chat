@@ -44,13 +44,14 @@ def recreate_collection(journeys: DataFrame):
             ):
                 id_buf.append(int(id))
                 text_buf.append(row.text)
-                arrival_time: datetime
+                arrival_time: datetime = None
                 try:
                     arrival_time = datetime.combine(date.min, row.arrival_time)
                 except:
                     continue
                 meta_buf.append(
                     {
+                        "source": "timetable",
                         "trip_id": row.trip_id,
                         "stop_id": row.stop_id,
                         "arrival_time": arrival_time,
