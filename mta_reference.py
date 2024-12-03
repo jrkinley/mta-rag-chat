@@ -5,17 +5,10 @@
 #   rm -f ./google_transit.zip
 
 import os
-import logging
 import pandas as pd
 from typing import Optional
 from pandas import DataFrame, Series
 from datetime import datetime, timedelta
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(threadName)s] [%(levelname)s]  %(message)s",
-    handlers=[logging.StreamHandler()],
-)
 
 
 class MTAReference:
@@ -67,9 +60,7 @@ class MTAReference:
         end_mask = self.journeys["arrival_time"] <= pd.Timestamp(end).time()
         self.journeys = self.journeys.loc[start_mask]
         self.journeys = self.journeys.loc[end_mask]
-        logging.info(
-            f"Number of journeys between {start} and {end}: {len(self.journeys)}"
-        )
+        print(f"Number of journeys between {start} and {end}: {len(self.journeys)}")
 
     def enrich_journeys(self):
         # Add next stop
@@ -154,7 +145,7 @@ class MTAReference:
         try:
             name = self.routes.loc[route_id].iloc[0]
         except KeyError:
-            logging.debug(f"Unknown route: {route_id}")
+            print(f"Unknown route: {route_id}")
         return name
 
     def get_stop_name(self, stop_id: str) -> str:
@@ -163,7 +154,7 @@ class MTAReference:
         try:
             name = self.stops.loc[stop_id].iloc[0]
         except KeyError:
-            logging.debug(f"Unknown stop: {stop_id}")
+            print(f"Unknown stop: {stop_id}")
         return name
 
     def get_direction(self, stop_id: str) -> str:
@@ -206,7 +197,7 @@ class MTAReference:
             os.path.join(MTAReference.base_dir, "routes.txt"), routes_cols
         )
         routes_df.set_index("route_id", inplace=True)
-        logging.info(f"Routes: {len(routes_df)}")
+        print(f"Routes: {len(routes_df)}")
         return routes_df
 
     @staticmethod
@@ -224,7 +215,7 @@ class MTAReference:
         trips_df["direction_id"] = trips_df.apply(
             lambda row: "South" if row.direction_id == 1 else "North", axis=1
         )
-        logging.info(f"Trips: {len(trips_df)}")
+        print(f"Trips: {len(trips_df)}")
         return trips_df
 
     @staticmethod
@@ -234,7 +225,7 @@ class MTAReference:
             os.path.join(MTAReference.base_dir, "stops.txt"), stops_cols
         )
         stops_df.set_index("stop_id", inplace=True)
-        logging.info(f"Stops: {len(stops_df)}")
+        print(f"Stops: {len(stops_df)}")
         return stops_df
 
     @staticmethod
@@ -242,5 +233,5 @@ class MTAReference:
         stop_times_df: DataFrame = MTAReference.load_ref(
             os.path.join(MTAReference.base_dir, "stop_times.txt")
         )
-        logging.info(f"Stop times: {len(stop_times_df)}")
+        print(f"Stop times: {len(stop_times_df)}")
         return stop_times_df

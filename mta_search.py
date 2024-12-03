@@ -1,6 +1,5 @@
 import os
 import sys
-import logging
 import cohere
 from mta_reference import MTAReference
 from datetime import date, datetime, timedelta
@@ -8,12 +7,6 @@ from dotenv import load_dotenv
 from cohere import Client, ChatDocument
 from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, DatetimeRange
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(threadName)s] [%(levelname)s]  %(message)s",
-    handlers=[logging.StreamHandler()],
-)
 
 load_dotenv()
 qdrant_url = os.getenv("QDRANT_URL")
@@ -28,13 +21,13 @@ def retrieve(query: str, co: Client, qd: QdrantClient) -> list[ChatDocument]:
     """
 
     # Timetable time filter (no date)
-    tt_now = datetime.combine(date.min, datetime.now().time())
-    tt_min = tt_now - timedelta(minutes=5)
-    tt_max = tt_now + timedelta(minutes=15)
+    dt = datetime.now()
+    tt_min = datetime.combine(date.min, dt.time())
+    tt_max = tt_min + timedelta(minutes=15)
 
     # Realtime time filter
-    rt_min = datetime.now() - timedelta(minutes=5)
-    rt_max = datetime.now() + timedelta(minutes=15)
+    rt_min = dt
+    rt_max = dt + timedelta(minutes=15)
 
     filter = Filter(
         should=[
@@ -84,17 +77,17 @@ def retrieve(query: str, co: Client, qd: QdrantClient) -> list[ChatDocument]:
 
 if __name__ == "__main__":
     if len(sys.argv) == 0:
-        logging.error("Please ask a question!")
+        print("Please ask a question!")
         sys.exit(1)
 
     cohere_client = cohere.Client(cohere_key)
     qdrant_client = QdrantClient(url=qdrant_url)
 
     query = sys.argv[1]
-    logging.info(f"Question: {query}")
+    print(f"Question: {query}")
     try:
         results = retrieve(query, cohere_client, qdrant_client)
     finally:
         qdrant_client.close()
     for r in results:
-        logging.info(f"{r}")
+        print(f"{r}")

@@ -1,5 +1,4 @@
 import os
-import logging
 import cohere
 from mta_reference import MTAReference
 from pandas import DataFrame
@@ -9,12 +8,6 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 from qdrant_client import QdrantClient
 from qdrant_client.models import Batch, Distance, VectorParams
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(threadName)s] [%(levelname)s]  %(message)s",
-    handlers=[logging.StreamHandler()],
-)
 
 load_dotenv()
 qdrant_url = os.getenv("QDRANT_URL")
@@ -38,6 +31,7 @@ def recreate_collection(journeys: DataFrame):
             vectors_config=VectorParams(size=1024, distance=Distance.COSINE),
         )
 
+        print("Loading journeys into QDrant collection...")
         with logging_redirect_tqdm():
             for id, row in tqdm(
                 journeys.iterrows(), total=journeys.shape[0], colour="#F9944F"
@@ -76,6 +70,7 @@ def recreate_collection(journeys: DataFrame):
                     meta_buf.clear()
     finally:
         client.close()
+    print("Done!")
 
 
 if __name__ == "__main__":

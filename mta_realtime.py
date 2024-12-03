@@ -1,7 +1,6 @@
 import os
 import requests
 import logging
-import pandas as pd
 import time
 import json
 from mta_reference import MTAReference
@@ -67,9 +66,9 @@ def fetch_updates(url: str, routes: Optional[list[str]] = None):
         if entity.HasField("trip_update"):
             trip_update = entity.trip_update
             for stop in trip_update.stop_time_update:
-                # Include latest updates within 2 minute window
+                # Include latest updates
                 arrived = datetime.fromtimestamp(stop.arrival.time)
-                tmin = datetime.now() - timedelta(minutes=5)
+                tmin = datetime.now() - timedelta(minutes=1)
                 tmax = datetime.now() + timedelta(minutes=5)
                 if (arrived < tmin) or (arrived > tmax):
                     continue
