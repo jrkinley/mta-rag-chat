@@ -5,7 +5,7 @@ This demo uses the MTA's freely available data feeds for the New York City Subwa
 Cohere's `command-r` chat model is then used to provide subway passengers with a chatbot experience. It uses relevant documents from the QDrant collection for context and responds to passenger questions in a friendly but typical New Yawker accent. Capisce!
 
 <p align="center">
-    <img src="./cohere-mta-chat.png" width="75%" />
+    <img src="./cohere-mta-chat.png" width="80%" />
 </p>
 
 # Deployment Instructions
@@ -93,11 +93,16 @@ What is the next train to arrive at 50 St?
 
 - MTA Chat:
 
-Hey there! I gotta few options for ya. There's a couple of trains comin' into the 50 St station, headin' in both directions.
+Hey there! I gotta few options for ya. There's a couple of trains comin'
+into the 50 St station, headin' in both directions.
 
-If you're lookin' to go south, there's a train arrivin' at 12:10:30, 12:15:30 or 12:16:30 -- depends on whether you wanna get off at the next stop Times Sq-42 St, or sit tight for a few more minutes.
+If you're lookin' to go south, there's a train arrivin' at 12:10:30,
+12:15:30 or 12:16:30 -- depends on whether you wanna get off at the next
+stop Times Sq-42 St, or sit tight for a few more minutes.
 
-Headin' north, there's a train at 12:18:30, bound for Van Cortlandt Park-242 St. That one's a bit of a long one, so make sure you're on the right one!
+Headin' north, there's a train at 12:18:30, bound for Van Cortlandt
+Park-242 St. That one's a bit of a long one, so make sure you're on the
+right one!
 
 ---------------------------------------------------------------------------
 
@@ -110,7 +115,9 @@ Does the train travelling south stop at Franklin St?
 
 - MTA Chat:
 
-Yep, the South Ferry train stops at Franklin St. You're lookin' at about 12:11:30 for that one to arrive, or 12:16:30 if ya wanna hold out for the next one.
+Yep, the South Ferry train stops at Franklin St. You're lookin' at about
+12:11:30 for that one to arrive, or 12:16:30 if ya wanna hold out for the
+next one.
 
 ---------------------------------------------------------------------------
 
@@ -123,7 +130,9 @@ What is the headsign on this train?
 
 - MTA Chat:
 
-Oh yeah, that one's headed to South Ferry. See the sign up above the doors? Yeah, that'll say South Ferry. Don't worry, it's not just for show -- this whole train's headed that way.
+Oh yeah, that one's headed to South Ferry. See the sign up above the doors?
+Yeah, that'll say South Ferry. Don't worry, it's not just for show -- this
+whole train's headed that way.
 
 ---------------------------------------------------------------------------
 
