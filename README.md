@@ -1,8 +1,8 @@
 # New York City Subway Chatbot with Cohere and Redpanda
 
-This chatbot demo uses the MTA's freely available data feeds for the New York City Subway (https://new.mta.info/developers). The static GTFS subway schedule feed is loaded into a QDrant vector database collection, and the collection is kept up-to-date with new subway trip updates by streaming the realtime GTFS-RT feeds (https://api.mta.info/#/subwayRealTimeFeeds) through the Redpanda data streaming platform, enriching the events with Cohere embeddings in-flight.
+This demo uses the MTA's freely available data feeds for the New York City Subway (https://new.mta.info/developers) to build a passenger chatbot. The MTA data feeds include static and realtime flavours. The static GTFS subway schedule is loaded into a QDrant vector database collection, and the collection is kept up-to-date with subway trip updates by streaming the realtime GTFS-RT feeds (https://api.mta.info/#/subwayRealTimeFeeds) through the Redpanda data streaming platform, enriching the events with Cohere embeddings in-flight.
 
-Cohere's `command-r` chat model is used to provide subway passengers with a chatbot experience. It uses relevant documents from the up-to-date QDrant collection for context and responds to passenger questions in a friendly but typical New Yawker accent. Capisce!
+Cohere's `command-r` chat model is then used to provide subway passengers with a chatbot experience. It uses relevant documents from the QDrant collection for context and responds to passenger questions in a friendly but typical New Yawker accent. Capisce!
 
 <p align="center">
     <img src="./cohere-mta-chat.png" width="75%" />
@@ -81,7 +81,7 @@ python mta_search.py "What is the next train to arrive at 50 St?"
 
 ## Run the ChatBot
 
-```diff
+```bash
 python mta_chat.py
 
 Ask a question: What is the next train to arrive at 50 St?
