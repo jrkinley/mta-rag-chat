@@ -81,7 +81,7 @@ python mta_search.py "What is the next train to arrive at 50 St?"
 
 ## Run the ChatBot
 
-```bash
+```diff
 python mta_chat.py
 
 Ask a question: What is the next train to arrive at 50 St?
