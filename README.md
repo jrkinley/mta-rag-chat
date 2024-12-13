@@ -17,8 +17,8 @@ Cohere's `command-r` chat model is then used to provide subway passengers with a
 git clone https://github.com/jrkinley/cohere-mta-chat.git
 cd cohere-mta-chat
 python3 -m venv env
-pip install -r requirements.txt
 source env/bin/activate
+pip install -r requirements.txt
 ```
 
 
