@@ -1,0 +1,17 @@
+{
+    "mcpServers": {
+        "turbopuffer": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "/path/to/turbopuffer-mcp",
+                "run",
+                "turbopuffer_mcp.py"
+            ],
+            "env": {
+                "TURBOPUFFER_API_KEY": "your_token_here",
+                "TURBOPUFFER_BASE_URL": "api.turbopuffer.com"
+            }
+        }
+    }
+}

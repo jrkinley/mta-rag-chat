@@ -1,150 +1,142 @@
-# New York City Subway Chatbot with Cohere and Redpanda
+# New York City Subway Chatbot for Claude Desktop
 
-This demo uses the MTA's freely available data feeds for the New York City Subway (https://new.mta.info/developers) to build a passenger chatbot. The MTA data feeds include static and realtime flavours. The static GTFS subway schedule is loaded into a QDrant vector database collection, and the collection is kept up-to-date with subway trip updates by streaming the realtime GTFS-RT feeds (https://api.mta.info/#/subwayRealTimeFeeds) through the Redpanda data streaming platform, enriching the events with Cohere embeddings in-flight.
+This demo uses the MTA's freely available data feeds for the New York City Subway (https://new.mta.info/developers) to build a passenger chatbot. The static GTFS subway schedule is loaded into a [Turbopuffer](https://turbopuffer.com/) namespace for vector and full-text search.
 
-Cohere's `command-r` chat model is then used to provide subway passengers with a chatbot experience. It uses relevant documents from the QDrant collection for context and responds to passenger questions in a friendly but typical New Yawker accent. Capisce!
+The chatbot is powered by Claude Desktop configured with a simple Turbopuffer Model Context Protocol (MCP) server, which enables Claude to search through the subway timetable data stored in Turbopuffer. This integration allows Claude to retrieve highly relevant schedule and route information to provide accurate, contextual responses to passenger queries about the NYC subway timetable. The chatbot also happens to be a native New Yawker. Capisce! 
 
-<p align="center">
-    <img src="./cohere-mta-chat.png" width="80%" />
-</p>
+## 🚇 Overview
 
-# Deployment Instructions
+This project combines NYC MTA's real-time subway data with AI-powered chat functionality, allowing users to ask natural language questions about subway schedules, routes, and station information. The system uses:
+
+- **GTFS Data**: Real-time subway schedules and route information from the MTA
+- **Full-Text Search**: Turbopuffer for fast semantic search across transit data
+- **Claude Integration**: RAG-powered chat through Model Context Protocol (MCP)
+
+## 📦 Installation
+
+### Prerequisites
+
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/) package manager
+- [Turbopuffer](https://turbopuffer.com/) account and API key
+- Claude Desktop (for chat interface)
+
+### Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/jrkinley/mta-rag-chat.git
+   cd mta-rag-chat
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   uv sync
+   ```
+
+3. **Download MTA GTFS data**:
+   ```bash
+   chmod +x setup.sh
+   ./setup.sh
+   ```
+
+4. **Configure environment variables**:
+   Create a `.env` file with your Turbopuffer credentials:
+   ```bash
+   TURBOPUFFER_API_KEY=your_api_key_here
+   TURBOPUFFER_BASE_URL=your_region.turbopuffer.com
+   ```
+
+5. **Load the MTA GTFS data into Turbopuffer**:
+  The `notebooks/load_gtfs_data.ipynb` Jupyter notebook provides a step-by-step guide for loading MTA GTFS data into Turbopuffer:
+
+6. **Configure Claude Desktop**: 
+  Adding the following to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+  ```json
+  {
+    "mcpServers": {
+        "turbopuffer": {
+          "command": "uv",
+          "args": [
+              "--directory",
+              "/absolute/path/to/mta-rag-chat/turbopuffer-mcp/",
+              "run",
+              "turbopuffer_mcp.py"
+          ],
+          "env": {
+              "TURBOPUFFER_API_KEY": "your_token_here",
+              "TURBOPUFFER_BASE_URL": "your_region.turbopuffer.com"
+          }
+        }
+    }
+  }
+  ```
+
+7. **Restart Claude Desktop** to load the MCP server
+
+## 🤖 Start chatting to Claude
+
+### Claude's responses with tools disabled
+
+<div style="display: flex; justify-content: space-between;">
+  <img src="images/claude_1a.png" width="32%" alt="Claude's response with tools disabled">
+  <img src="images/claude_1b.png" width="32%" alt="Claude's response with tools disabled">
+  <img src="images/claude_1c.png" width="32%" alt="Claude's response with tools disabled">
+</div>
+</br>
+
+Even when tools are disabled, Claude provides good advice about subway routes to point passengers in the right direction, but it falls short when asked about real-time information or specific schedule details.
+
+### Claude's responses with tools enabled
+
+<div style="display: flex; justify-content: space-between; align-items: flex-start;">
+  <img src="images/claude_2a.png" width="32%" alt="Claude's response with tools enabled">
+  <img src="images/claude_2b.png" width="32%" alt="Claude's response with tools enabled">
+  <img src="images/claude_2c.png" width="32%" alt="Claude's response with tools enabled">
+</div>
+</br>
+
+When tools are enabled, Claude can access the GTFS schedule data stored in Turbopuffer through the MCP server. This allows Claude to provide much more detailed and accurate responses with specific schedule times, route numbers, and station names. Claude can now confidently answer questions about:
+
+- Exact departure and arrival times for specific routes
+- Transfer points and connection details between lines
+- Station-specific schedule information
+- Service patterns for different times of day
+- Real-time schedule data from the MTA feed
+
+The combination of Claude's natural language understanding and direct access to transit data through Turbopuffer creates a much more capable and reliable subway information assistant. Rather than providing general guidance, Claude can now give precise, actionable information to help passengers plan their subway journeys effectively.
 
 
-## Create Python Environment
+## 🚀 Future Enhancements
 
-```bash
-git clone https://github.com/jrkinley/cohere-mta-chat.git
-cd cohere-mta-chat
-python3 -m venv env
-source env/bin/activate
-pip install -r requirements.txt
-```
+To make the subway chatbot even more helpful for passengers, here are some potential enhancements that could be implemented:
 
+### Real-time Service Updates
+- Integrate the MTA's GTFS-RT real-time feeds (https://api.mta.info/#/subwayRealTimeFeeds) to provide:
+  - Live train arrival predictions and delays
+  - Service disruptions and engineering works
+  - Temporary route changes and diversions
+  - Platform changes and station closures
+- Enable Claude to proactively warn about disruptions affecting suggested routes
 
-## Start Redpanda and QDrant in Docker
+### Emergency Services Integration
+- Connect to NYC emergency services data feeds to:
+  - Alert passengers about stations to avoid due to police activity
+  - Provide alternate routes during emergency situations
+  - Warn about station entrances/exits affected by incidents
+  - Share safety advisories from NYPD and FDNY
 
-```bash
-docker compose up -d
-[+] Running 5/5
- ✔ Network redpanda_network    Created
- ✔ Volume "redpanda-0"         Created
- ✔ Container redpanda-0        Started
- ✔ Container qdrant            Started
- ✔ Container redpanda-console  Started
-```
+### Social Context
+- Incorporate real-time social media feeds to add passenger context:
+  - Twitter/X mentions of specific stations or lines
+  - Crowdsourced reports of platform conditions
+  - Station amenity status (elevators, escalators)
+  - Special events causing increased crowding
+- Allow Claude to factor social insights into route recommendations
 
-
-## Bootstrap the QDrant Vector Database Collection
-
-Load the static GTFS subway schedule feed into a QDrant collection:
-
-```bash
-python mta_reload_timetable.py
-Loading journeys into QDrant collection...
-100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7356/7356 [00:56<00:00, 131.03it/s]
-Done!
-```
-
-The QDrant collection can be viewed in the web UI: http://localhost:6333/dashboard#/collections
-
-
-## Start the Realtime GTFS-RT Feeds
-
-Start the realtime feeds to collect subway trip updates, streaming them through Redpanda and Redpanda Connect into the QDrant collection. This enriches the events with Cohere embeddings in-flight and keeps the collection up-to-date with realtime subway train movements.
-
-I like to open a new terminal window or tab and split it into 3 horizontal panes:
-
-```bash
-# In the top pane, start the realtime feed collector to stream trip 
-# updates into a Redpanda topic.
-python mta_realtime.py
-
-# In the middle pane, start a consumer to stream events from the 
-# topic to the terminal.
-rpk topic consume mta-gtfs-realtime -X brokers=localhost:19092 | jq
-
-# In the bottom pane, start the Connect pipelines that adds the Cohere 
-# embeddings and upserts the events into the QDrant collection.
-rpk connect run --log.level debug --env-file .env mta_embeddings.yaml
-```
-
-The events can be viewed in Redpanda Console: http://localhost:8080/topics
-
-
-## Test Relevant Document Retrieval 
-
-```bash
-python mta_search.py "What is the next train to arrive at 50 St?"
-```
-
-
-## Run the ChatBot
-
-```diff
-python mta_chat.py
-
-Ask a question: What is the next train to arrive at 50 St?
-Retrieving information...
-
-+ User:
-
-What is the next train to arrive at 50 St?
-
-- MTA Chat:
-
-Hey there! I gotta few options for ya. There's a couple of trains comin'
-into the 50 St station, headin' in both directions.
-
-If you're lookin' to go south, there's a train arrivin' at 12:10:30,
-12:15:30 or 12:16:30 -- depends on whether you wanna get off at the next
-stop Times Sq-42 St, or sit tight for a few more minutes.
-
-Headin' north, there's a train at 12:18:30, bound for Van Cortlandt
-Park-242 St. That one's a bit of a long one, so make sure you're on the
-right one!
-
----------------------------------------------------------------------------
-
-Ask a question: Does the train travelling south stop at Franklin St?
-Retrieving information...
-
-+ User:
-
-Does the train travelling south stop at Franklin St?
-
-- MTA Chat:
-
-Yep, the South Ferry train stops at Franklin St. You're lookin' at about
-12:11:30 for that one to arrive, or 12:16:30 if ya wanna hold out for the
-next one.
-
----------------------------------------------------------------------------
-
-Ask a question: What is the headsign on this train?
-Retrieving information...
-
-+ User:
-
-What is the headsign on this train?
-
-- MTA Chat:
-
-Oh yeah, that one's headed to South Ferry. See the sign up above the doors?
-Yeah, that'll say South Ferry. Don't worry, it's not just for show -- this
-whole train's headed that way.
-
----------------------------------------------------------------------------
-
-Ask a question: Thanks!
-
-+ User:
-
-Thanks!
-
-- MTA Chat:
-
-Anytime, mate! Have a great day, and enjoy the ride!
-
----------------------------------------------------------------------------
-```
+### Enhanced Visualization
+- Generate custom route maps for complex journeys
+- Provide platform-specific walking directions within stations
+- Show alternative route options side-by-side
+- Highlight areas of construction or disruption
