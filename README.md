@@ -104,8 +104,6 @@ When tools are enabled, Claude can access the GTFS schedule data stored in Turbo
 - Exact departure and arrival times for specific routes
 - Transfer points and connection details between lines
 - Station-specific schedule information
-- Service patterns for different times of day
-- Real-time schedule data from the MTA feed
 
 The combination of Claude's natural language understanding and direct access to transit data through Turbopuffer creates a much more capable and reliable subway information assistant. Rather than providing general guidance, Claude can now give precise, actionable information to help passengers plan their subway journeys effectively.
 
