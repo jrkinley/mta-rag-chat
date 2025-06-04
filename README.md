@@ -8,7 +8,7 @@ The chatbot is powered by Claude Desktop configured with a simple Turbopuffer Mo
 
 This project combines NYC MTA's real-time subway data with AI-powered chat functionality, allowing users to ask natural language questions about subway schedules, routes, and station information. The system uses:
 
-- **GTFS Data**: Real-time subway schedules and route information from the MTA
+- **GTFS Data**: NYC subway schedules and route information from the MTA
 - **Full-Text Search**: Turbopuffer for fast semantic search across transit data
 - **Claude Integration**: RAG-powered chat through Model Context Protocol (MCP)
 
