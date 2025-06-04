@@ -17,7 +17,7 @@ Add the following to your Claude Desktop configuration file (`~/Library/Applicat
             "command": "uv",
             "args": [
                "--directory",
-		         "absolute/path/to/turbopuffer-mcp/",
+               "absolute/path/to/turbopuffer-mcp/",
                "run",
                "turbopuffer_mcp.py"
             ],
