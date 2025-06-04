@@ -49,7 +49,7 @@ This project combines NYC MTA's real-time subway data with AI-powered chat funct
 
 5. **Load the MTA GTFS data into Turbopuffer**:
 
-   The `notebooks/load_gtfs_data.ipynb` Jupyter notebook provides a step-by-step guide for loading MTA GTFS data into Turbopuffer:
+   The `load_gtfs_data.ipynb` Jupyter notebook provides a step-by-step guide for loading MTA GTFS data into Turbopuffer:
 
 7. **Configure Claude Desktop**: 
 
