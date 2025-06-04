@@ -1,6 +1,6 @@
 # New York City Subway Chatbot for Claude Desktop
 
-This demo uses the MTA's freely available data feeds for the New York City Subway (https://new.mta.info/developers) to build a passenger chatbot. The static GTFS subway schedule is loaded into a [Turbopuffer](https://turbopuffer.com/) namespace for vector and full-text search.
+This demo uses the MTA's freely available [data feeds](https://new.mta.info/developers) for the New York City Subway to build a passenger chatbot. The static GTFS subway schedule is loaded into a [Turbopuffer](https://turbopuffer.com/) namespace for vector and full-text search.
 
 The chatbot is powered by Claude Desktop configured with a simple Turbopuffer Model Context Protocol (MCP) server, which enables Claude to search through the subway timetable data stored in Turbopuffer. This integration allows Claude to retrieve highly relevant schedule and route information to provide accurate, contextual responses to passenger queries about the NYC subway timetable. The chatbot also happens to be a native New Yawker. Capisce! 
 
