@@ -48,30 +48,32 @@ This project combines NYC MTA's real-time subway data with AI-powered chat funct
    ```
 
 5. **Load the MTA GTFS data into Turbopuffer**:
-  The `notebooks/load_gtfs_data.ipynb` Jupyter notebook provides a step-by-step guide for loading MTA GTFS data into Turbopuffer:
 
-6. **Configure Claude Desktop**: 
-  Adding the following to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+   The `notebooks/load_gtfs_data.ipynb` Jupyter notebook provides a step-by-step guide for loading MTA GTFS data into Turbopuffer:
 
-  ```json
-  {
-    "mcpServers": {
-        "turbopuffer": {
-          "command": "uv",
-          "args": [
-              "--directory",
-              "/absolute/path/to/mta-rag-chat/turbopuffer-mcp/",
-              "run",
-              "turbopuffer_mcp.py"
-          ],
-          "env": {
-              "TURBOPUFFER_API_KEY": "your_token_here",
-              "TURBOPUFFER_BASE_URL": "your_region.turbopuffer.com"
-          }
-        }
-    }
-  }
-  ```
+7. **Configure Claude Desktop**: 
+
+   Add the following to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+     ```json
+     {
+       "mcpServers": {
+           "turbopuffer": {
+             "command": "uv",
+             "args": [
+                 "--directory",
+                 "/absolute/path/to/mta-rag-chat/turbopuffer-mcp/",
+                 "run",
+                 "turbopuffer_mcp.py"
+             ],
+             "env": {
+                 "TURBOPUFFER_API_KEY": "your_token_here",
+                 "TURBOPUFFER_BASE_URL": "your_region.turbopuffer.com"
+             }
+           }
+       }
+     }
+     ```
 
 7. **Restart Claude Desktop** to load the MCP server
 
